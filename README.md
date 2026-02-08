@@ -1,5 +1,8 @@
-# GLIM-converter
+# [GLIM](https://github.com/koide3/glim) converter to [HDMapping](https://github.com/MapsHD/HDMapping)
 
+## Hint
+
+Please change branch to [Bunker-DVI-Dataset-reg-1](https://github.com/MapsHD/benchmark-GLIM-to-HDMapping/tree/Bunker-DVI-Dataset-reg-1) for quick experiment.  
 ## Example Dataset: 
 
 Download the dataset from [Bunker DVI Dataset](https://charleshamesse.github.io/bunker-dvi-dataset/)  
