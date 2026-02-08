@@ -6,16 +6,6 @@ Download the dataset `reg-1.bag` by clicking [link](https://cloud.cylab.be/publi
 File 'reg-1.bag-pc.bag' is an input for further calculations.
 It should be located in '~/hdmapping-benchmark/data'.
 
-We now convert data from ROS1 to ROS2
-
-```shell
-docker run -it -v ~/hdmapping-benchmark/data:/data --user 1000:1000 glim_humble /bin/bash
-cd /data
-rosbags-convert --src reg-1.bag-pc.bag --dst reg-1-ros2 
-```
-
-close terminal
-
 ## Step 2 (prepare docker)
 
 open new terminal
@@ -29,7 +19,20 @@ git checkout Bunker-DVI-Dataset-reg-1
 docker build -t glim_humble .
 ```
 
-## Step 3 (run docker, file 'reg-1-ros2' should be in '~/hdmapping-benchmark/data')
+## Step 3 (convert data)
+We now convert data from ROS1 to ROS2
+
+```shell
+docker run -it -v ~/hdmapping-benchmark/data:/data --user 1000:1000 glim_humble /bin/bash
+cd /data
+rosbags-convert --src reg-1.bag-pc.bag --dst reg-1-ros2 
+```
+
+close terminal
+
+## Step 4 (run docker, file 'reg-1-ros2' should be in '~/hdmapping-benchmark/data')
+open new terminal
+
 ```shell
 cd ~/hdmapping-benchmark/benchmark-GLIM-to-HDMapping
 chmod +x docker_session_run-ros2-glim.sh 
