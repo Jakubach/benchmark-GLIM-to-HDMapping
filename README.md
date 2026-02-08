@@ -1,120 +1,93 @@
-# GLIM-converter
+# GLIM to HDMapping simlified instruction
 
-## Example Dataset: 
+## Step 1 (prepare data)
+Download the dataset `reg-1.bag` by clicking [link](https://cloud.cylab.be/public.php/dav/files/7PgyjbM2CBcakN5/reg-1.bag) (it is part of [Bunker DVI Dataset](https://charleshamesse.github.io/bunker-dvi-dataset)) and convert with [tool](https://github.com/MapsHD/livox_bag_aggregate) to 'reg-1.bag-pc.bag'.
 
-Download the dataset from [Bunker DVI Dataset](https://charleshamesse.github.io/bunker-dvi-dataset/)  
+File 'reg-1.bag-pc.bag' is an input for further calculations.
+It should be located in '~/hdmapping-benchmark/data'.
 
-
-## Intended use 
-
-This small toolset allows to integrate SLAM solution provided by [GLIM](https://github.com/koide3/glim) with [HDMapping](https://github.com/MapsHD/HDMapping).
-This repository contains ROS 2 workspace that :
-  - submodule to tested revision of GLIM
-  - a converter that listens to topics advertised from odometry node and save data in format compatible with HDMapping.
-
-## Dependencies
+We now convert data from ROS1 to ROS2
 
 ```shell
-sudo apt install -y nlohmann-json3-dev
+docker run -it -v ~/hdmapping-benchmark/data:/data --user 1000:1000 glim_humble /bin/bash
+cd /data
+rosbags-convert --src reg-1.bag-pc.bag --dst reg-1-ros2 
 ```
 
-## Documentation
-```shell
-https://koide3.github.io/glim/
-```
+close terminal
 
-To install the common dependencies needed for GLIM, follow the instructions provided in the official documentation:
-```shell
-https://koide3.github.io/glim/installation.html
-```
-## Quick Start
+## Step 2 (prepare docker)
 
-This section provides a quick guide to run the project, including example configuration changes and launch instructions.
+open new terminal
 
 ```shell
-https://koide3.github.io/glim/quickstart.html
+mkdir -p ~/hdmapping-benchmark
+cd ~/hdmapping-benchmark
+git clone https://github.com/MapsHD/benchmark-GLIM-to-HDMapping.git --recursive
+cd benchmark-GLIM-to-HDMapping
+git checkout Bunker-DVI-Dataset-reg-1
+docker build -t glim_humble .
 ```
 
-## Building
-
-Clone the repo
+## Step 3 (run docker, file 'reg-1-ros2' should be in '~/hdmapping-benchmark/data')
 ```shell
-mkdir -p /test_ws/src
-cd /test_ws/src
-git clone https://github.com/marcinmatecki/GLIM-to-HDMapping.git --recursive
-cd ..
-colcon build
+cd ~/hdmapping-benchmark/benchmark-GLIM-to-HDMapping
+chmod +x docker_session_run-ros2-glim.sh 
+cd ~/hdmapping-benchmark/data
+~/hdmapping-benchmark/benchmark-GLIM-to-HDMapping/docker_session_run-ros2-glim.sh reg-1-ros2 .
 ```
 
-## Usage - data SLAM:
+## Step 4 (Open and visualize data)
+Expected data should appear in ~/hdmapping-benchmark/data/output_hdmapping-glim
+Use tool [multi_view_tls_registration_step_2](https://github.com/MapsHD/HDMapping) to open session.json from ~/hdmapping-benchmark/data/output_hdmapping-glim.
 
-Prepare recorded bag with estimated odometry:
+You should see following data
 
-In first terminal record bag:
-```shell
-ros2 bag record /glim_ros/aligned_points_corrected /glim_ros/odom_corrected
-```
+lio_initial_poses.reg
 
-and start odometry:
-```shell 
-cd /test_ws/
-source ./install/setup.sh # adjust to used shell
-ros2 run glim_ros glim_rosbag <path_to_rosbag>
-```
+poses.reg
 
-## Usage - conversion:
+scan_lio_0.laz
 
-```shell
-cd /test_ws/
-source ./install/setup.sh # adjust to used shell
-ros2 run glim-to-hdmapping listener <recorded_bag> <output_dir>
-```
+scan_lio_1.laz
 
-## Convert(If it's a ROS1 .bag file):
+scan_lio_2.laz
 
-```shell
-rosbags-convert --src {your_downloaded_bag} --dst {desired_destination_for_the_converted_bag}
-```
+scan_lio_3.laz
 
-## Record the bag file:
+scan_lio_4.laz
 
-```shell
-ros2 bag record /glim_ros/aligned_points_corrected /glim_ros/odom_corrected {your_directory_for_the_recorded_bag}
-```
-## To use this bag file, you need to update the IMU and point cloud topics in:
+scan_lio_5.laz
 
-```shell
-src/GLIM-to-HDMapping/src/glim/config/config_ros.json
-```
+scan_lio_6.laz
 
-Changes:
+scan_lio_7.laz
 
-```shell
-  Topics:
-    "imu_topic": "/os1_cloud_node1/imu",
-    "points_topic": "/os1_cloud_node1/points",
-    "image_topic": "/image",
-```
+scan_lio_8.laz
 
-## GLIM Launch:
+scan_lio_9.laz
 
-```shell
-cd /test_ws/
-source ./install/setup.sh # adjust to used shell
-ros2 run glim_ros glim_rosbag {path_to_bag_file} 
-```
+session.json
 
-## During the record (if you want to stop recording earlier) / after finishing the bag:
+trajectory_lio_0.csv
 
-```shell
-In the terminal where the ros record is, interrupt the recording by CTRL+C
-Do it also in ros launch terminal by CTRL+C.
-```
+trajectory_lio_1.csv
 
-## Usage - Conversion (ROS bag to HDMapping, after recording stops):
+trajectory_lio_2.csv
 
-```shell
-cd /test_ws/
-source ./install/setup.sh # adjust to used shell
-ros2 run glim-to-hdmapping listener <recorded_bag> <output_dir>
-```
+trajectory_lio_3.csv
+
+trajectory_lio_4.csv
+
+trajectory_lio_5.csv
+
+trajectory_lio_6.csv
+
+trajectory_lio_7.csv
+
+trajectory_lio_8.csv
+
+trajectory_lio_9.csv
+
+## Contact email
+januszbedkowski@gmail.com
